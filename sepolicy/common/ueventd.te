@@ -1,0 +1,5 @@
+r_dir_file(ueventd, vfat)
+allow ueventd exfat:file { getattr open read };
+allow ueventd exfat:dir search;
+
+allow ueventd proc:file { read };
