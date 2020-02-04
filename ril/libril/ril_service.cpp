@@ -539,6 +539,9 @@ bool copyHidlStringToRil(char **dest, const hidl_string &src, RequestInfo *pRI, 
         RLOGE("Copy of the HIDL string has been truncated, as "
               "the string length reported by size() does not "
               "match the length of string returned by c_str().");
+        free(*dest);
+        *dest = NULL;
+        sendErrorResponse(pRI, RIL_E_INTERNAL_ERR);
         return false;
     }
     return true;
@@ -1364,8 +1367,15 @@ Return<void> RadioImpl::setNetworkSelectionModeManual(int32_t serial,
 #if VDBG
     RLOGD("setNetworkSelectionModeManual: serial %d", serial);
 #endif
+#ifndef OLD_MNC_FORMAT
     dispatchString(serial, mSlotId, RIL_REQUEST_SET_NETWORK_SELECTION_MANUAL,
             operatorNumeric.c_str());
+#else
+    std::string opNum = operatorNumeric;
+    opNum.append("+");
+    dispatchString(serial, mSlotId, RIL_REQUEST_SET_NETWORK_SELECTION_MANUAL,
+            opNum.c_str());
+#endif
     return Void();
 }
 
@@ -3023,14 +3033,11 @@ int radio::getIccCardStatusResponse(int slotId,
         RadioResponseInfo responseInfo = {};
         populateResponseInfo(responseInfo, serial, responseType, e);
         CardStatus cardStatus = {};
-        RIL_CardStatus_v6 *p_cur = ((RIL_CardStatus_v6 *) response);
-        if (response == NULL || responseLen != sizeof(RIL_CardStatus_v6)
-                || p_cur->gsm_umts_subscription_app_index >= p_cur->num_applications
-                || p_cur->cdma_subscription_app_index >= p_cur->num_applications
-                || p_cur->ims_subscription_app_index >= p_cur->num_applications) {
+        if (response == NULL || responseLen != sizeof(RIL_CardStatus_v6)) {
             RLOGE("getIccCardStatusResponse: Invalid response");
             if (e == RIL_E_SUCCESS) responseInfo.error = RadioError::INVALID_RESPONSE;
         } else {
+            RIL_CardStatus_v6 *p_cur = ((RIL_CardStatus_v6 *) response);
             cardStatus.cardState = (CardState) p_cur->card_state;
             cardStatus.universalPinState = (PinState) p_cur->universal_pin_state;
             cardStatus.gsmUmtsSubscriptionAppIndex = p_cur->gsm_umts_subscription_app_index;
@@ -3575,6 +3582,11 @@ void fillCellIdentityResponse(CellIdentity &cellIdentity, RIL_CellIdentity_v16 &
                     std::to_string(rilCellIdentity.cellIdentityGsm.mcc);
             cellIdentity.cellIdentityGsm[0].mnc =
                     ril::util::mnc::decode(rilCellIdentity.cellIdentityGsm.mnc);
+
+            if (cellIdentity.cellIdentityGsm[0].mcc == "-1") {
+                cellIdentity.cellIdentityGsm[0].mcc = "";
+            }
+
             cellIdentity.cellIdentityGsm[0].lac = rilCellIdentity.cellIdentityGsm.lac;
             cellIdentity.cellIdentityGsm[0].cid = rilCellIdentity.cellIdentityGsm.cid;
             cellIdentity.cellIdentityGsm[0].arfcn = rilCellIdentity.cellIdentityGsm.arfcn;
@@ -3588,6 +3600,11 @@ void fillCellIdentityResponse(CellIdentity &cellIdentity, RIL_CellIdentity_v16 &
                     std::to_string(rilCellIdentity.cellIdentityWcdma.mcc);
             cellIdentity.cellIdentityWcdma[0].mnc =
                     ril::util::mnc::decode(rilCellIdentity.cellIdentityWcdma.mnc);
+
+            if (cellIdentity.cellIdentityWcdma[0].mcc == "-1") {
+                cellIdentity.cellIdentityWcdma[0].mcc = "";
+            }
+
             cellIdentity.cellIdentityWcdma[0].lac = rilCellIdentity.cellIdentityWcdma.lac;
             cellIdentity.cellIdentityWcdma[0].cid = rilCellIdentity.cellIdentityWcdma.cid;
             cellIdentity.cellIdentityWcdma[0].psc = rilCellIdentity.cellIdentityWcdma.psc;
@@ -3612,6 +3629,11 @@ void fillCellIdentityResponse(CellIdentity &cellIdentity, RIL_CellIdentity_v16 &
                     std::to_string(rilCellIdentity.cellIdentityLte.mcc);
             cellIdentity.cellIdentityLte[0].mnc =
                     ril::util::mnc::decode(rilCellIdentity.cellIdentityLte.mnc);
+
+            if (cellIdentity.cellIdentityLte[0].mcc == "-1") {
+                cellIdentity.cellIdentityLte[0].mcc = "";
+            }
+
             cellIdentity.cellIdentityLte[0].ci = rilCellIdentity.cellIdentityLte.ci;
             cellIdentity.cellIdentityLte[0].pci = rilCellIdentity.cellIdentityLte.pci;
             cellIdentity.cellIdentityLte[0].tac = rilCellIdentity.cellIdentityLte.tac;
@@ -3625,6 +3647,11 @@ void fillCellIdentityResponse(CellIdentity &cellIdentity, RIL_CellIdentity_v16 &
                     std::to_string(rilCellIdentity.cellIdentityTdscdma.mcc);
             cellIdentity.cellIdentityTdscdma[0].mnc =
                     ril::util::mnc::decode(rilCellIdentity.cellIdentityTdscdma.mnc);
+
+            if (cellIdentity.cellIdentityTdscdma[0].mcc == "-1") {
+                cellIdentity.cellIdentityTdscdma[0].mcc = "";
+            }
+
             cellIdentity.cellIdentityTdscdma[0].lac = rilCellIdentity.cellIdentityTdscdma.lac;
             cellIdentity.cellIdentityTdscdma[0].cid = rilCellIdentity.cellIdentityTdscdma.cid;
             cellIdentity.cellIdentityTdscdma[0].cpid = rilCellIdentity.cellIdentityTdscdma.cpid;
@@ -3676,6 +3703,14 @@ void fillCellIdentityFromVoiceRegStateResponseString(CellIdentity &cellIdentity,
             /* valid CID are hexstrings in the range 0x00000000 - 0xffffffff */
             rilCellIdentity.cellIdentityGsm.cid =
                     convertResponseHexStringEntryToInt(response, 2, numStrings);
+
+            if (numStrings >= 13) {
+                rilCellIdentity.cellIdentityGsm.mcc =
+                        convertResponseStringEntryToInt(response, 11, numStrings);
+
+                rilCellIdentity.cellIdentityGsm.mnc =
+                        convertResponseStringEntryToInt(response, 12, numStrings);
+            }
             break;
         }
 
@@ -3726,6 +3761,14 @@ void fillCellIdentityFromVoiceRegStateResponseString(CellIdentity &cellIdentity,
             /* valid CID are hexstrings in the range 0x00000000 - 0xffffffff */
             rilCellIdentity.cellIdentityLte.ci =
                     convertResponseHexStringEntryToInt(response, 2, numStrings);
+
+            if (numStrings >= 13) {
+                rilCellIdentity.cellIdentityTdscdma.mcc =
+                        convertResponseStringEntryToInt(response, 11, numStrings);
+
+                rilCellIdentity.cellIdentityTdscdma.mnc =
+                        convertResponseStringEntryToInt(response, 12, numStrings);
+            }
             break;
         }
 
@@ -3768,6 +3811,14 @@ void fillCellIdentityFromDataRegStateResponseString(CellIdentity &cellIdentity,
             /* valid CID are hexstrings in the range 0x00000000 - 0xffffffff */
             rilCellIdentity.cellIdentityWcdma.cid =
                     convertResponseHexStringEntryToInt(response, 2, numStrings);
+
+            if (numStrings >= 13) {
+                rilCellIdentity.cellIdentityWcdma.mcc =
+                        convertResponseStringEntryToInt(response, 11, numStrings);
+
+                rilCellIdentity.cellIdentityWcdma.mnc =
+                        convertResponseStringEntryToInt(response, 12, numStrings);
+            }
             break;
         }
         case RIL_CELL_INFO_TYPE_TD_SCDMA:{
@@ -3778,6 +3829,14 @@ void fillCellIdentityFromDataRegStateResponseString(CellIdentity &cellIdentity,
             /* valid CID are hexstrings in the range 0x00000000 - 0xffffffff */
             rilCellIdentity.cellIdentityTdscdma.cid =
                     convertResponseHexStringEntryToInt(response, 2, numStrings);
+
+            if (numStrings >= 13) {
+                rilCellIdentity.cellIdentityTdscdma.mcc =
+                        convertResponseStringEntryToInt(response, 11, numStrings);
+
+                rilCellIdentity.cellIdentityTdscdma.mnc =
+                        convertResponseStringEntryToInt(response, 12, numStrings);
+            }
             break;
         }
         case RIL_CELL_INFO_TYPE_LTE: {
@@ -4588,7 +4647,12 @@ int radio::getAvailableNetworksResponse(int slotId,
             for (int i = 0, j = 0; i < numStrings; i = i + qanRespStrings, j++) {
                 networks[j].alphaLong = convertCharPtrToHidlString(resp[i]);
                 networks[j].alphaShort = convertCharPtrToHidlString(resp[i + 1]);
+#ifndef OLD_MNC_FORMAT
                 networks[j].operatorNumeric = convertCharPtrToHidlString(resp[i + 2]);
+#else
+                const char *mccmncIdx = strrchr(resp[i + 2], '+');
+                networks[j].operatorNumeric = hidl_string(resp[i + 2], mccmncIdx - resp[i + 2]);
+#endif
                 int status = convertOperatorStatusToInt(resp[i + 3]);
                 if (status == -1) {
                     if (e == RIL_E_SUCCESS) responseInfo.error = RadioError::INVALID_RESPONSE;
@@ -7090,6 +7154,11 @@ void convertRilSignalStrengthToHalV8(void *response, size_t responseLen,
 
     signalStrength.gw.signalStrength = rilSignalStrength->GW_SignalStrength.signalStrength;
     signalStrength.gw.bitErrorRate = rilSignalStrength->GW_SignalStrength.bitErrorRate;
+
+    // RIL_SignalStrength_v10 not support gw.timingAdvance. Set to INT_MAX as
+    // invalid value.
+    signalStrength.gw.timingAdvance = INT_MAX;
+
     signalStrength.cdma.dbm = rilSignalStrength->CDMA_SignalStrength.dbm;
     signalStrength.cdma.ecio = rilSignalStrength->CDMA_SignalStrength.ecio;
     signalStrength.evdo.dbm = rilSignalStrength->EVDO_SignalStrength.dbm;
