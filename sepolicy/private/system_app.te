@@ -1,0 +1,5 @@
+# nfc
+allow platform_app nfc_service:service_manager { find };
+ 
+binder_call(system_app, storaged)
+binder_call(system_app, system_suspend)

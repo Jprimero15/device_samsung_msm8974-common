@@ -95,5 +95,7 @@ TARGET_SYSTEM_PROP += device/samsung/msm8974-common/system.prop
 # Time services
 BOARD_USES_QC_TIME_SERVICES := true
 
+PLATFORM_SEPOLICY_VERSION_TEST := false
+
 # inherit from the proprietary version
 -include vendor/samsung/msm8974-common/BoardConfigVendor.mk

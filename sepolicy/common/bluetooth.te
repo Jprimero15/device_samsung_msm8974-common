@@ -9,3 +9,5 @@ allow bluetooth {
     bt_fw_file
     wifi_data_file
 }:file r_file_perms;
+
+binder_call(bluetooth, gpuservice)
