@@ -182,6 +182,13 @@ PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl.samsung8974 \
     android.hardware.sensors@1.0-service.samsung8974
 
+# SurfaceFlinger
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    ro.surface_flinger.force_hwc_copy_for_virtual_displays=true \
+    ro.surface_flinger.vsync_event_phase_offset_ns=4000000 \
+    ro.surface_flinger.vsync_sf_event_phase_offset_ns=8000000
+    ro.surface_flinger.max_frame_buffer_acquired_buffers=3
+
 # Touch features
 PRODUCT_PACKAGES += \
     vendor.lineage.touch@1.0-service.samsung
