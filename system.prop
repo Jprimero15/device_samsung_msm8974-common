@@ -3,3 +3,6 @@ debug.sf.enable_gl_backpressure=1
 
 # Memory optimizations
 ro.vendor.qti.sys.fw.bservice_enable=true
+
+# OLD MNC format
+ro.telephony.use_old_mnc_mcc_format=true
