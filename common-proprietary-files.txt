@@ -1,5 +1,6 @@
-# aptX (Moto griffin - NCLS25.86-11-4-6-5)
-vendor/lib/libaptX_encoder.so|b03772672144d4b750a5672c2922aded93bb0512
+# aptX bluetooth 
+vendor/lib/libaptX_encoder.so|984739a0bc968e18f75ced205733fe3f51c2d4f0
+vendor/lib/libaptXHD_encoder.so|974c486e4ca03faa0713553d9dfe2995ac93e01c
 
 # Graphics (OnePlus onyx - Oxygen OS 3.1.4 - OnePlusXOxygen_14_201611071506)
 vendor/lib/egl/eglsubAndroid.so|b8a5790c5b4ba4cf0018c94066104610c821ed8e
