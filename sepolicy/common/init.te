@@ -16,7 +16,6 @@ allow init {
     sysfs_bluetooth_writable
     sysfs_camera
     sysfs_graphics
-    sysfs_hal_pwr
     sysfs_iio
     sysfs_input
     sysfs_kgsl
@@ -63,6 +62,7 @@ allow init hwservicemanager:binder { call transfer };
 allow init hal_usb_hwservice:hwservice_manager { add };
 allow init hidl_base_hwservice:hwservice_manager { add };
 allow init system_file:file { mounton };
+allow init sysfs_hal_pwr:file { setattr getattr open read write };
 
 binder_call(init, system_server)
 
