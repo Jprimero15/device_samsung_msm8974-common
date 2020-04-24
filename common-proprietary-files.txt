@@ -2,6 +2,9 @@
 vendor/lib/libaptX_encoder.so|984739a0bc968e18f75ced205733fe3f51c2d4f0
 vendor/lib/libaptXHD_encoder.so|974c486e4ca03faa0713553d9dfe2995ac93e01c
 
+# Camera (Samsung klte - G900FXXU1CSA1_G900FVIA1CSC1_VIA)
+vendor/lib/libmmjpeg.so|2b0bf12bbb7b63c84db77f922d18a4a335634930
+
 # Graphics (OnePlus onyx - Oxygen OS 3.1.4 - OnePlusXOxygen_14_201611071506)
 vendor/lib/egl/eglsubAndroid.so|b8a5790c5b4ba4cf0018c94066104610c821ed8e
 vendor/lib/egl/libEGL_adreno.so|cd29673e990dba8158e961e287a79dfbd852d095
