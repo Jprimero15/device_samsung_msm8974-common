@@ -2,8 +2,6 @@
 audio.offload.buffer.size.kb=32
 audio.offload.gapless.enabled=false
 av.offload.enable=true
-persist.bt.enableAptXHD=true
-persist.service.btui.use_aptx=1
 
 # fastbootd
 ro.fastbootd.available=true
