@@ -21,7 +21,7 @@ TARGET_BOARD_PLATFORM := msm8974
 TARGET_BOARD_PLATFORM_GPU := qcom-adreno330
 
 # Architecture
-TARGET_CPU_VARIANT := generic
+TARGET_CPU_VARIANT := krait
 TARGET_CPU_VARIANT_RUNTIME := krait
 
 # Audio
