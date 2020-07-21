@@ -81,6 +81,8 @@ DEVICE_MANIFEST_FILE := device/samsung/msm8974-common/manifest.xml
 DEVICE_MATRIX_FILE := device/samsung/msm8974-common/compatibility_matrix.xml
 
 # SELinux
+SELINUX_IGNORE_NEVERALLOWS := true
+SELINUX_IGNORE_NEVERALLOWS_ON_USER := true
 include device/samsung/msm8974-common/sepolicy/sepolicy.mk
 
 # Netd
