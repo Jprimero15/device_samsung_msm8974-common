@@ -61,6 +61,9 @@ void loc_eng_nmea_send(char *pNmea, int length, loc_eng_data_s_type *loc_eng_dat
     int64_t now = tv.tv_sec * 1000LL + tv.tv_usec / 1000;
     if (loc_eng_data_p->nmea_cb != NULL)
         loc_eng_data_p->nmea_cb(now, pNmea, length);
+
+    loc_eng_data_p->adapter->getUlpProxy()->reportNmea(pNmea, length);
+
     LOC_LOGD("NMEA <%s", pNmea);
 }
 
@@ -145,7 +148,6 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
     int utcHours = pTm->tm_hour;
     int utcMinutes = pTm->tm_min;
     int utcSeconds = pTm->tm_sec;
-    int utcMSeconds = (location.gpsLocation.timestamp)%1000;
 
     if (generate_nmea) {
         // ------------------
@@ -384,8 +386,8 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         pMarker = sentence;
         lengthRemaining = sizeof(sentence);
 
-        length = snprintf(pMarker, lengthRemaining, "$GPRMC,%02d%02d%02d.%02d,A," ,
-                          utcHours, utcMinutes, utcSeconds,utcMSeconds/10);
+        length = snprintf(pMarker, lengthRemaining, "$GPRMC,%02d%02d%02d,A," ,
+                          utcHours, utcMinutes, utcSeconds);
 
         if (length < 0 || length >= lengthRemaining)
         {
@@ -537,8 +539,8 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         pMarker = sentence;
         lengthRemaining = sizeof(sentence);
 
-        length = snprintf(pMarker, lengthRemaining, "$GPGGA,%02d%02d%02d.%02d," ,
-                          utcHours, utcMinutes, utcSeconds, utcMSeconds/10);
+        length = snprintf(pMarker, lengthRemaining, "$GPGGA,%02d%02d%02d," ,
+                          utcHours, utcMinutes, utcSeconds);
 
         if (length < 0 || length >= lengthRemaining)
         {
