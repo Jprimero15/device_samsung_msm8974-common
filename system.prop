@@ -44,3 +44,6 @@ ro.soc.model=MSM8974
 
 # Time
 persist.timed.enable=true
+
+# VNDK
+ro.vndk.version=current
