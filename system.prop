@@ -42,6 +42,9 @@ persist.rild.nitz_short_ons_3=""
 ro.soc.manufacturer=Qualcomm
 ro.soc.model=MSM8974
 
+# System
+persist.sys.binary_xml=false
+
 # Time
 persist.timed.enable=true
 
