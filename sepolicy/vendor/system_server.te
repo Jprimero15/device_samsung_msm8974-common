@@ -1,3 +1,8 @@
+binder_call(system_server, init)
+get_prop(system_server, build_bootimage_prop)
+get_prop(system_server, vendor_default_prop)
+get_prop(system_server, vendor_persist_camera_prop)
+
 allow system_server {
     efs_file
     mpctl_data_file
@@ -13,3 +18,6 @@ allow system_server proc_last_kmsg:file r_file_perms;
 get_prop(system_server, exported_camera_prop);
 get_prop(system_server, userspace_reboot_config_prop);
 get_prop(system_server, userspace_reboot_exported_prop);
+
+allow system_server vendor_init:fd { use };
+allow system_server vendor_init:fifo_file rw_file_perms;

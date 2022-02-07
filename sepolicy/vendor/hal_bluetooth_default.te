@@ -1,5 +1,8 @@
+get_prop(hal_bluetooth_default, default_prop)
+
 allow hal_bluetooth_default {
   bt_fw_file
+  firmware_file
   wifi_data_file
 }:file r_file_perms;
 
