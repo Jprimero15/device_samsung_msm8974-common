@@ -138,7 +138,7 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         return;
     }
 
-    char sentence[NMEA_SENTENCE_MAX_LENGTH] = {0};
+    char sentence[NMEA_SENTENCE_MAX_LENGTH] = {};
     char* pMarker = sentence;
     int lengthRemaining = sizeof(sentence);
     int length = 0;
@@ -148,6 +148,7 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
     int utcHours = pTm->tm_hour;
     int utcMinutes = pTm->tm_min;
     int utcSeconds = pTm->tm_sec;
+    int utcMSeconds = (location.gpsLocation.timestamp)%1000;
 
     if (generate_nmea) {
         // ------------------
@@ -155,7 +156,7 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         // ------------------
 
         uint32_t svUsedCount = 0;
-        uint32_t svUsedList[32] = {0};
+        uint32_t svUsedList[32] = {};
         uint32_t mask = loc_eng_data_p->gps_used_mask;
         for (uint8_t i = 1; mask > 0 && svUsedCount < 32; i++)
         {
@@ -226,7 +227,7 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         // ------$GNGSA------
         // ------------------
         uint32_t gloUsedCount = 0;
-        uint32_t gloUsedList[32] = {0};
+        uint32_t gloUsedList[32] = {};
 
         // Reset locals for GNGSA sentence generation
         pMarker = sentence;
@@ -386,8 +387,8 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         pMarker = sentence;
         lengthRemaining = sizeof(sentence);
 
-        length = snprintf(pMarker, lengthRemaining, "$GPRMC,%02d%02d%02d,A," ,
-                          utcHours, utcMinutes, utcSeconds);
+        length = snprintf(pMarker, lengthRemaining, "$GPRMC,%02d%02d%02d.%02d,A," ,
+                          utcHours, utcMinutes, utcSeconds,utcMSeconds/10);
 
         if (length < 0 || length >= lengthRemaining)
         {
@@ -539,8 +540,8 @@ void loc_eng_nmea_generate_pos(loc_eng_data_s_type *loc_eng_data_p,
         pMarker = sentence;
         lengthRemaining = sizeof(sentence);
 
-        length = snprintf(pMarker, lengthRemaining, "$GPGGA,%02d%02d%02d," ,
-                          utcHours, utcMinutes, utcSeconds);
+        length = snprintf(pMarker, lengthRemaining, "$GPGGA,%02d%02d%02d.%02d," ,
+                          utcHours, utcMinutes, utcSeconds, utcMSeconds/10);
 
         if (length < 0 || length >= lengthRemaining)
         {
@@ -717,7 +718,7 @@ void loc_eng_nmea_generate_sv(loc_eng_data_s_type *loc_eng_data_p,
 {
     ENTRY_LOG();
 
-    char sentence[NMEA_SENTENCE_MAX_LENGTH] = {0};
+    char sentence[NMEA_SENTENCE_MAX_LENGTH] = {};
     char* pMarker = sentence;
     int lengthRemaining = sizeof(sentence);
     int length = 0;

@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libloc_eng
-LOCAL_PROPRIETARY_MODULE := true
+LOCAL_VENDOR_MODULE := true
 
 LOCAL_MODULE_TAGS := optional
 
@@ -33,9 +33,16 @@ LOCAL_SRC_FILES += \
     loc_eng_dmn_conn_glue_pipe.c
 
 LOCAL_CFLAGS += \
-     -fno-short-enums \
-     -D_ANDROID_ \
-     -Wno-unused-parameter
+    -fno-short-enums \
+    -D_ANDROID_ \
+    -Wno-format \
+    -Wno-mismatched-tags \
+    -Wno-null-conversion \
+    -Wno-reorder \
+    -Wno-sign-compare \
+    -Wno-unused-function \
+    -Wno-unused-parameter \
+    -Wno-unused-variable
 
 LOCAL_C_INCLUDES:= \
     $(TARGET_OUT_HEADERS)/gps.utils \
@@ -55,7 +62,7 @@ include $(BUILD_HEADER_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := gps.$(TARGET_BOARD_PLATFORM)
-LOCAL_PROPRIETARY_MODULE := true
+LOCAL_VENDOR_MODULE := true
 
 LOCAL_MODULE_TAGS := optional
 
@@ -76,8 +83,10 @@ LOCAL_SRC_FILES += \
 
 LOCAL_CFLAGS += \
     -fno-short-enums \
-     -D_ANDROID_ \
-     -Wno-unused-parameter
+    -D_ANDROID_ \
+    -Wno-format \
+    -Wno-mismatched-tags \
+    -Wno-unused-parameter
 
 ## Includes
 LOCAL_C_INCLUDES:= \
