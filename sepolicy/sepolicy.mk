@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 The LineageOS Project
+# Copyright (C) 2022 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 include device/qcom/sepolicy-legacy/sepolicy.mk
 
 # Board specific SELinux policy variable definitions
-BOARD_SEPOLICY_DIRS += \
-    device/samsung/msm8974-common/sepolicy/common
+BOARD_VENDOR_SEPOLICY_DIRS += \
+    device/samsung/msm8974-common/sepolicy/vendor
 SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += \
     device/samsung/msm8974-common/sepolicy/private
