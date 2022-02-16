@@ -5,6 +5,8 @@ get_prop(rild, default_prop)
 get_prop(rild, config_prop)
 get_prop(rild, vendor_rild_libpath_prop)
 
+permissive rild;
+
 allow rild alarm_device:chr_file rw_file_perms;
 
 allow rild radio_core_data_file:dir rw_dir_perms;
