@@ -86,7 +86,7 @@ PRODUCT_PACKAGES += \
     camera.device@1.0-impl \
     camera.msm8974 \
     libxml2 \
-    Snap
+    CameraGo
 
 # DRM
 PRODUCT_PACKAGES += \
